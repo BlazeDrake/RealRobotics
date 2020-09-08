@@ -6,78 +6,53 @@ using namespace okapi;
 using namespace lib7842;
 
 //motor constants(if odom is used)
-const int FrontLeft=18;
-const int FrontRight=-20;
-const int rampPort=-19;
+const int FrontLeft=-18;
+const int FrontRight=20;
+
 //controller stuff
 Controller masterController;
-ControllerDigital rampDown{ControllerDigital::L2};
-ControllerDigital rampUp{ControllerDigital::L1};
 
-ControllerDigital TakeIn{ControllerDigital::R1};
-ControllerDigital TakeOut{ControllerDigital::R2};
-//Scale for auton
-ChassisScales Scales{{3.25_in,10.25_in},imev5GreenTPR};
 
 //motor stuff
-MotorGroup LeftDrive{FrontLeft,17};
-MotorGroup RightDrive{FrontRight,-11};
-std::shared_ptr<Motor> ramp=std::make_shared<Motor>(rampPort);
-MotorGroup take{13,-1};
+MotorGroup LeftDrive{FrontLeft,-17};
+MotorGroup RightDrive{FrontRight,11};
 
 //pid & odom stuff for when it's time to test PID auton
 //odom(Change the values when bot is built)
 
 
-//Pid(Only use a PD controller), will probably delete
-//auto PID= IterativeControllerFactory::posPID(0.001, 0.0, 0.000);
-//IterativePosPIDController::Gains pos{.002,.0000,.00003,.00};//<-position(KU:unknown,PU:unknown)
-//IterativePosPIDController::Gains angle={.00/*30*/,.0000,.0000,.00};/*<-keeping it straight(don't use yet)*/
-//IterativePosPIDController::Gains turn={.0035,.0000,.00015,.00};/*<-turning(don't use yet)*/
 
-auto drive= ChassisControllerBuilder()
+std::shared_ptr<OdomChassisController> drive= ChassisControllerBuilder()
   .withMotors(LeftDrive,RightDrive)
-  .withSensors(IntegratedEncoder(FrontLeft),IntegratedEncoder(FrontRight)) //<-encoders
-  .withDimensions(AbstractMotor::gearset::green,Scales)
-  .withClosedLoopControllerTimeUtil(25,5,250_ms)
-  //.withGains(pos,turn,angle)
-  .build();
+  .withGains({.0001,0.0,.00001}, {.003,0.0,0.0003})
+  .withSensors(LeftDrive.getEncoder(),RightDrive.getEncoder()) //<-encoders
+  .withDimensions(AbstractMotor::gearset::green,ChassisScales{{3.25_in,10.25_in},imev5GreenTPR})
+  .withOdometry(StateMode::CARTESIAN)
+  .buildOdometry();
+  //.withClosedLoopControllerTimeUtil(25,5,250_ms)
+
+
+
+
 //auton select
 std::shared_ptr<GUI::Screen> screen;
 GUI::Selector* selector;
-//Tray Pid
-
-//use acetousk pid test for ramp stuff
-std::shared_ptr<AsyncPosPIDController> tray=std::make_shared<AsyncPosPIDController>(
-  ramp->getEncoder(),
-  ramp,
-  TimeUtilFactory::withSettledUtilParams(),
-  0.0015,//<-P
-  0.0,//<-I
-  0.000017,//<-D
-  0.0
-);
-
 
 //other variables
 
-const int rampTop=870;
-const int rampBottom=0;
-
-const int takeSpeed(200);
 const double driveSpeed(0.8);//<-percentage, 1=100%
-bool constantIntake(false);
-bool checking(false);
+
 
 //functions for my sanity
 bool Dinput(ControllerDigital ibutton){
  return masterController.getDigital(ibutton);
+
 }
 
 
 void auton(int mult=1){
   //Move foward & grab cubes
-    drive->moveDistanceAsync(45_in);//<-move 2 sqaures
+    /*drive->moveDistanceAsync(45_in);//<-move 2 sqaures
     take.moveVelocity(takeSpeed);
     drive->waitUntilSettled();
     take.moveVelocity(0);
@@ -93,7 +68,7 @@ void auton(int mult=1){
     tray->setTarget(rampTop);
     tray->waitUntilSettled();
     tray->setTarget(rampBottom);
-    tray->waitUntilSettled();
+    tray->waitUntilSettled();*/
 
 }
 
@@ -133,16 +108,7 @@ void initialize() {
 	RightDrive.tarePosition();
 	RightDrive.setEncoderUnits(AbstractMotor::encoderUnits::rotations);
 
-  take.tarePosition();
-  take.setEncoderUnits(AbstractMotor::encoderUnits::rotations);
-  take.setGearing(AbstractMotor::gearset::green);
 
-  ramp->tarePosition();
-  ramp->setGearing(AbstractMotor::gearset::red);
-  ramp->setEncoderUnits(AbstractMotor::encoderUnits::degrees);
-
-  tray->startThread();
-  tray->flipDisable(false);
 
   //auton stuff
   screen = std::make_shared<GUI::Screen>( lv_scr_act(), LV_COLOR_MAKE(153, 157, 161) );
@@ -191,6 +157,8 @@ void competition_initialize() {}
  */
 void autonomous() {
     //selector->run();
+    //drive->driveToPoint(Point{0_in,-1_in});
+
 }
 
 /**
@@ -216,8 +184,8 @@ void opcontrol() {
    	pros::lcd::print(0,"Drive 1.0");
 		//driving
     double left, right,
-    turn(masterController.getAnalog(ControllerAnalog::leftX)),
-    forward(masterController.getAnalog(ControllerAnalog::rightY));
+    turn(-masterController.getAnalog(ControllerAnalog::leftX)),
+    forward(-masterController.getAnalog(ControllerAnalog::rightY));
 
 
     if(std::abs(forward)<=0.1){
@@ -232,53 +200,10 @@ void opcontrol() {
 
 
     drive->getModel()->tank(left*driveSpeed,right*driveSpeed,.1);
-	  //moving the ramp
-		if(Dinput(rampUp)){
-      tray->setTarget(rampTop);
-      while(Dinput(rampUp)){
-        pros::delay(20);
-      }
-		}
-		else if(Dinput(rampDown)){
-
-      tray->flipDisable(true);
-      ramp->moveVelocity(-100);
-      while(Dinput(rampDown)){
-        pros::delay(20);
-      }
-      ramp->moveVelocity(0);
-      tray->flipDisable(false);
-      tray->setTarget(rampBottom
-      );
-
-		}
-
-		pros::delay(20);
-		//intake/outtake
-		if(Dinput(TakeIn)||Dinput(TakeOut)){
-			pros::delay(100);
-			if(Dinput(TakeIn)&&Dinput(TakeOut)&&!checking){
-					constantIntake=!constantIntake;
-          checking=true;
-			}
-		else{
-      checking=false;
-    }
-	}
-  if((Dinput(TakeIn)||constantIntake)&&!Dinput(TakeOut)){
-      take.moveVelocity(takeSpeed);
-  }
-  else if(Dinput(TakeOut)){
-      take.moveVelocity(-takeSpeed);
-  }
-  else{
-      take.moveVelocity(0);
-  }
-
 //auton button(COMMENT OUT FOR COMPS)
-/*if(Dinput(ControllerDigital::A)){
+if(Dinput(ControllerDigital::A)){
   selector->run();
-}*/
+}
 		pros::delay(20);
 	}
 

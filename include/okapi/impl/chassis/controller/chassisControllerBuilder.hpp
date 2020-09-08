@@ -473,10 +473,11 @@ class ChassisControllerBuilder {
 
   bool isParentedToCurrentTask{true};
 
-  std::shared_ptr<ChassisControllerPID> buildCCPID();
+
   std::shared_ptr<ChassisControllerIntegrated> buildCCI();
   std::shared_ptr<DefaultOdomChassisController>
   buildDOCC(std::shared_ptr<ChassisController> chassisController);
+    std::shared_ptr<ChassisControllerPID> buildCCPID();
 
   std::shared_ptr<ChassisModel> makeChassisModel();
   std::shared_ptr<SkidSteerModel> makeSkidSteerModel();
