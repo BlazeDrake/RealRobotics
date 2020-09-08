@@ -8,20 +8,14 @@ using namespace lib7842;
 //motor constants(if odom is used)
 const int FrontLeft=-18;
 const int FrontRight=20;
-const int rampPort=-19;
+
 //controller stuff
 Controller masterController;
-ControllerDigital rampDown{ControllerDigital::L2};
-ControllerDigital rampUp{ControllerDigital::L1};
 
-ControllerDigital TakeIn{ControllerDigital::R1};
-ControllerDigital TakeOut{ControllerDigital::R2};
 
 //motor stuff
 MotorGroup LeftDrive{FrontLeft,-17};
 MotorGroup RightDrive{FrontRight,11};
-std::shared_ptr<Motor> ramp=std::make_shared<Motor>(rampPort);
-MotorGroup take{13,-1};
 
 //pid & odom stuff for when it's time to test PID auton
 //odom(Change the values when bot is built)
@@ -43,29 +37,11 @@ std::shared_ptr<OdomChassisController> drive= ChassisControllerBuilder()
 //auton select
 std::shared_ptr<GUI::Screen> screen;
 GUI::Selector* selector;
-//Tray Pid
-
-//use acetousk pid test for ramp stuff
-std::shared_ptr<AsyncPosPIDController> tray=std::make_shared<AsyncPosPIDController>(
-  ramp->getEncoder(),
-  ramp,
-  TimeUtilFactory::withSettledUtilParams(),
-  0.0015,//<-P
-  0.0,//<-I
-  0.000017,//<-D
-  0.0
-);
-
 
 //other variables
 
-const int rampTop=870;
-const int rampBottom=0;
-
-const int takeSpeed(200);
 const double driveSpeed(0.8);//<-percentage, 1=100%
-bool constantIntake(false);
-bool checking(false);
+
 
 //functions for my sanity
 bool Dinput(ControllerDigital ibutton){
@@ -76,7 +52,7 @@ bool Dinput(ControllerDigital ibutton){
 
 void auton(int mult=1){
   //Move foward & grab cubes
-    drive->moveDistanceAsync(45_in);//<-move 2 sqaures
+    /*drive->moveDistanceAsync(45_in);//<-move 2 sqaures
     take.moveVelocity(takeSpeed);
     drive->waitUntilSettled();
     take.moveVelocity(0);
@@ -92,7 +68,7 @@ void auton(int mult=1){
     tray->setTarget(rampTop);
     tray->waitUntilSettled();
     tray->setTarget(rampBottom);
-    tray->waitUntilSettled();
+    tray->waitUntilSettled();*/
 
 }
 
@@ -131,17 +107,6 @@ void initialize() {
 
 	RightDrive.tarePosition();
 	RightDrive.setEncoderUnits(AbstractMotor::encoderUnits::rotations);
-
-  take.tarePosition();
-  take.setEncoderUnits(AbstractMotor::encoderUnits::rotations);
-  take.setGearing(AbstractMotor::gearset::green);
-
-  ramp->tarePosition();
-  ramp->setGearing(AbstractMotor::gearset::red);
-  ramp->setEncoderUnits(AbstractMotor::encoderUnits::degrees);
-
-  tray->startThread();
-  tray->flipDisable(false);
 
 
 
@@ -192,7 +157,7 @@ void competition_initialize() {}
  */
 void autonomous() {
     //selector->run();
-    drive->driveToPoint(Point{0_in,-1_in});
+    //drive->driveToPoint(Point{0_in,-1_in});
 
 }
 
@@ -235,48 +200,6 @@ void opcontrol() {
 
 
     drive->getModel()->tank(left*driveSpeed,right*driveSpeed,.1);
-	  //moving the ramp
-		if(Dinput(rampUp)){
-      tray->setTarget(rampTop);
-      while(Dinput(rampUp)){
-        pros::delay(20);
-      }
-		}
-		else if(Dinput(rampDown)){
-
-      tray->flipDisable(true);
-      ramp->moveVelocity(-100);
-      while(Dinput(rampDown)){
-        pros::delay(20);
-      }
-      ramp->moveVelocity(0);
-      tray->flipDisable(false);
-      tray->setTarget(rampBottom);
-
-		}
-
-		pros::delay(20);
-		//intake/outtake
-		if(Dinput(TakeIn)||Dinput(TakeOut)){
-			pros::delay(100);
-			if(Dinput(TakeIn)&&Dinput(TakeOut)&&!checking){
-					constantIntake=!constantIntake;
-          checking=true;
-			}
-		else{
-      checking=false;
-    }
-	}
-  if((Dinput(TakeIn)||constantIntake)&&!Dinput(TakeOut)){
-      take.moveVelocity(takeSpeed);
-  }
-  else if(Dinput(TakeOut)){
-      take.moveVelocity(-takeSpeed);
-  }
-  else{
-      take.moveVelocity(0);
-  }
-
 //auton button(COMMENT OUT FOR COMPS)
 if(Dinput(ControllerDigital::A)){
   selector->run();
