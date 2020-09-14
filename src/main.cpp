@@ -117,11 +117,10 @@ void initialize() {
 	selector = dynamic_cast<GUI::Selector*>(
     	&screen->makePage<GUI::Selector>("Selector")
 			.button("Default", [&]() {
-         drive->moveDistance(-12_in);/*<-move half a square(push into small zone)*/
-         drive->moveDistance(12_in);/*<-move back*/
+         drive->moveDistance(1_in);
        })
-      .button("Red", [&]() { auton(-1); })
-      .button("Blue", [&]() { auton(); })
+      //.button("Red", [&]() { auton(-1); })
+      //.button("Blue", [&]() { auton(); })
       .build()
     );
 }
@@ -156,7 +155,7 @@ void competition_initialize() {}
  * from where it left off.
  */
 void autonomous() {
-    //selector->run();
+    selector->run();
     //drive->driveToPoint(Point{0_in,-1_in});
 
 }
