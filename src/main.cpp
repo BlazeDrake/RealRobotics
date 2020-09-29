@@ -14,8 +14,8 @@ using namespace lib7842;
 
 //motor constants(if odom is used)
 
-const int FrontLeft=2;
-const int FrontRight=3;
+const int FrontLeft=-2;
+const int FrontRight=10;
 const int rampPort=-19;
 
 //controller stuff
@@ -33,9 +33,9 @@ ControllerDigital TakeOut{ControllerDigital::R2};
 
 //motor stuff
 
-MotorGroup LeftDrive{FrontLeft,1};
+MotorGroup LeftDrive{FrontLeft,-1};
 
-MotorGroup RightDrive{FrontRight,5};
+MotorGroup RightDrive{FrontRight,9};
 
 std::shared_ptr<Motor> ramp=std::make_shared<Motor>(rampPort);
 
@@ -141,7 +141,7 @@ bool Dinput(ControllerDigital ibutton){
 void auton(int mult=1){
 
   //Move foward & grab cubes
-
+/*
     drive->moveDistanceAsync(45_in);//<-move 2 sqaures
 
     take.moveVelocity(takeSpeed);
@@ -177,7 +177,7 @@ void auton(int mult=1){
     tray->waitUntilSettled();
 
 
-
+*/
 }
 
 
@@ -374,7 +374,7 @@ void autonomous() {
 
     //selector->run();
 
-    drive->driveToPoint(Point{0_in,-1_in});
+    //drive->driveToPoint(Point{0_in,-1_in});
 
 
 
