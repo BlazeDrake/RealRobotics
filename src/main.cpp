@@ -116,7 +116,7 @@ const int rampBottom=0;
 
 const int takeSpeed(200);
 
-const double driveSpeed(0.8);//<-percentage, 1=100%
+const double driveSpeed(1);//<-percentage, 1=100%
 
 bool constantIntake(false);
 
