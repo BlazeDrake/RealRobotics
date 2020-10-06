@@ -39,7 +39,6 @@ MotorGroup RightDrive{FrontRight,9};
 
 std::shared_ptr<Motor> ramp=std::make_shared<Motor>(rampPort);
 
-MotorGroup take{13,-1};
 
 
 
@@ -80,25 +79,7 @@ GUI::Selector* selector;
 
 
 
-//use acetousk pid test for ramp stuff
 
-std::shared_ptr<AsyncPosPIDController> tray=std::make_shared<AsyncPosPIDController>(
-
-  ramp->getEncoder(),
-
-  ramp,
-
-  TimeUtilFactory::withSettledUtilParams(),
-
-  0.0015,//<-P
-
-  0.0,//<-I
-
-  0.000017,//<-D
-
-  0.0
-
-);
 
 
 
@@ -108,19 +89,14 @@ std::shared_ptr<AsyncPosPIDController> tray=std::make_shared<AsyncPosPIDControll
 
 
 
-const int rampTop=870;
-
-const int rampBottom=0;
 
 
 
-const int takeSpeed(200);
+
 
 const double driveSpeed(1);//<-percentage, 1=100%
 
-bool constantIntake(false);
 
-bool checking(false);
 
 
 
@@ -254,25 +230,7 @@ void initialize() {
 
 
 
-  take.tarePosition();
 
-  take.setEncoderUnits(AbstractMotor::encoderUnits::rotations);
-
-  take.setGearing(AbstractMotor::gearset::green);
-
-
-
-  ramp->tarePosition();
-
-  ramp->setGearing(AbstractMotor::gearset::red);
-
-  ramp->setEncoderUnits(AbstractMotor::encoderUnits::degrees);
-
-
-
-  tray->startThread();
-
-  tray->flipDisable(false);
 
 
 
@@ -432,10 +390,6 @@ void opcontrol() {
 
     forward(-masterController.getAnalog(ControllerAnalog::rightY));
 
-
-
-
-
     if(std::abs(forward)<=0.1){
 
         left=turn;
@@ -452,105 +406,20 @@ void opcontrol() {
 
 }
 
-
-
-
-
-
-
     drive->getModel()->tank(left*driveSpeed,right*driveSpeed,.1);
 
-	  //moving the ramp
-
-		if(Dinput(rampUp)){
-
-      tray->setTarget(rampTop);
-
-      while(Dinput(rampUp)){
-
-        pros::delay(20);
-
-      }
-
-		}
-
-		else if(Dinput(rampDown)){
 
 
-
-      tray->flipDisable(true);
-
-      ramp->moveVelocity(-100);
-
-      while(Dinput(rampDown)){
-
-        pros::delay(20);
-
-      }
-
-      ramp->moveVelocity(0);
-
-      tray->flipDisable(false);
-
-      tray->setTarget(rampBottom);
-
-
-
-		}
-
-
-
-		pros::delay(20);
-
-		//intake/outtake
-
-		if(Dinput(TakeIn)||Dinput(TakeOut)){
-
-			pros::delay(100);
-
-			if(Dinput(TakeIn)&&Dinput(TakeOut)&&!checking){
-
-					constantIntake=!constantIntake;
-
-          checking=true;
-
-			}
-
-		else{
-
-      checking=false;
-
-    }
-
-	}
-
-  if((Dinput(TakeIn)||constantIntake)&&!Dinput(TakeOut)){
-
-      take.moveVelocity(takeSpeed);
-
-  }
-
-  else if(Dinput(TakeOut)){
-
-      take.moveVelocity(-takeSpeed);
-
-  }
-
-  else{
-
-      take.moveVelocity(0);
-
-  }
 
 
 
 //auton button(COMMENT OUT FOR COMPS)
-
+/*
 if(Dinput(ControllerDigital::A)){
 
   selector->run();
 
-}
+}*/
 
 		pros::delay(20);
 
