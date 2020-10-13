@@ -14,20 +14,20 @@ using namespace lib7842;
 
 //motor constants(if odom is used)
 
-const int FrontLeft=-2;
-const int FrontRight=10;
-const int rampPort=-19;
+const int FrontLeft{-2};
+const int FrontRight{10};
+
 
 //controller stuff
 
 Controller masterController;
-ControllerDigital rampDown{ControllerDigital::L2};
-ControllerDigital rampUp{ControllerDigital::L1};
+ControllerDigital topIn{ControllerDigital::L1};
+ControllerDigital topOut{ControllerDigital::L2};
 
 
 
-ControllerDigital TakeIn{ControllerDigital::R1};
-ControllerDigital TakeOut{ControllerDigital::R2};
+ControllerDigital botIn{ControllerDigital::R1};
+ControllerDigital botOut{ControllerDigital::R2};
 
 
 
@@ -37,7 +37,10 @@ MotorGroup LeftDrive{FrontLeft,-1};
 
 MotorGroup RightDrive{FrontRight,9};
 
-std::shared_ptr<Motor> ramp=std::make_shared<Motor>(rampPort);
+MotorGroup topMotors{11,14};
+MotorGroup botMotors{12,13};//<-rename befor using
+
+//if pid is needed for 1 motor std::shared_ptr<Motor> ramp=std::make_shared<Motor>(rampPort);
 
 
 
@@ -252,10 +255,9 @@ void initialize() {
 
 			.button("Default", [&]() {
 
-         drive->moveDistance(-12_in);/*<-move half a square(push into small zone)*/
+         //drive->moveDistance(-12_in);/*<-move half a square(push into small zone)*/
 
-         drive->moveDistance(12_in);/*<-move back*/
-
+         //drive->moveDistance(12_in);/*<-move back*/
        })
 
       .button("Red", [&]() { auton(-1); })
@@ -404,10 +406,13 @@ void opcontrol() {
 
       right=forward-(0.75*turn);
 
-}
+    }
 
     drive->getModel()->tank(left*driveSpeed,right*driveSpeed,.1);
 
+    if(Dinput(topIn)){
+      topMotors.moveVelocity(
+    }
 
 
 
