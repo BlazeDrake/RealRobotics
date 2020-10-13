@@ -380,15 +380,12 @@ void opcontrol() {
 
 
 
-		//UPDATE VERSION EVERY TIME PROGRAM IS CHANGED SO UPLOAD ISSUES ARE KNOWN!!!
-
-   	pros::lcd::print(0,"Drive 1.0 Dev");
 
 		//driving
 
     double left, right,
 
-    turn(-masterController.getAnalog(ControllerAnalog::leftX)),
+    turn(masterController.getAnalog(ControllerAnalog::leftX)),
 
     forward(-masterController.getAnalog(ControllerAnalog::rightY));
 
