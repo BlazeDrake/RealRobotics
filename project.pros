@@ -287,7 +287,7 @@
         },
         "upload_options": {
             "compress_bin": true,
-            "description": "0.1: new bot",
+            "description": "0.2: intake test",
             "remote_name": "robot",
             "slot": 1
         }

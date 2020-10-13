@@ -21,13 +21,13 @@ const int FrontRight{10};
 //controller stuff
 
 Controller masterController;
-ControllerDigital topIn{ControllerDigital::L1};
-ControllerDigital topOut{ControllerDigital::L2};
+ControllerDigital topIn{ControllerDigital::R1};
+ControllerDigital topOut{ControllerDigital::R2};
 
 
 
-ControllerDigital botIn{ControllerDigital::R1};
-ControllerDigital botOut{ControllerDigital::R2};
+ControllerDigital botIn{ControllerDigital::L1};
+ControllerDigital botOut{ControllerDigital::L2};
 
 
 
@@ -37,7 +37,7 @@ MotorGroup LeftDrive{FrontLeft,-1};
 
 MotorGroup RightDrive{FrontRight,9};
 
-MotorGroup topMotors{11,14};
+MotorGroup topMotors{11,-14};
 MotorGroup botMotors{12,13};//<-rename befor using
 
 //if pid is needed for 1 motor std::shared_ptr<Motor> ramp=std::make_shared<Motor>(rampPort);
@@ -411,9 +411,14 @@ void opcontrol() {
     drive->getModel()->tank(left*driveSpeed,right*driveSpeed,.1);
 
     if(Dinput(topIn)){
-      topMotors.moveVelocity(
+      topMotors.moveVelocity(600);
     }
-
+    else if(Dinput(topOut)){
+      topMotors.moveVelocity(-600);
+    }
+    else{
+      topMotors.moveVelocity(0);
+    }
 
 
 
