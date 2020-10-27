@@ -37,8 +37,8 @@ MotorGroup LeftDrive{FrontLeft,-1};
 
 MotorGroup RightDrive{FrontRight,9};
 
-MotorGroup topMotors{11,-14};
-MotorGroup botMotors{12,13};//<-rename befor using
+MotorGroup topIntake{11,-14};
+MotorGroup botIntake{12,16};//<-rename befor using
 
 //if pid is needed for 1 motor std::shared_ptr<Motor> ramp=std::make_shared<Motor>(rampPort);
 
@@ -408,16 +408,24 @@ void opcontrol() {
     drive->getModel()->tank(left*driveSpeed,right*driveSpeed,.1);
 
     if(Dinput(topIn)){
-      topMotors.moveVelocity(600);
+      topIntake.moveVelocity(600);
     }
     else if(Dinput(topOut)){
-      topMotors.moveVelocity(-600);
+      topIntake.moveVelocity(-600);
     }
     else{
-      topMotors.moveVelocity(0);
+      topIntake.moveVelocity(0);
     }
 
-
+    if(Dinput(botIn)){
+      botIntake.moveVelocity(600);
+    }
+    else if(Dinput(botOut)){
+      botIntake.moveVelocity(-600);
+    }
+    else{
+      botIntake.moveVelocity(0);
+    }
 
 
 //auton button(COMMENT OUT FOR COMPS)
