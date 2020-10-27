@@ -14,8 +14,8 @@ using namespace lib7842;
 
 //motor constants(if odom is used)
 
-const int FrontLeft{-2};
-const int FrontRight{10};
+const int FrontLeft{-7};
+const int FrontRight{8};
 
 
 //controller stuff
@@ -35,7 +35,7 @@ ControllerDigital botOut{ControllerDigital::L2};
 
 MotorGroup LeftDrive{FrontLeft,-1};
 
-MotorGroup RightDrive{FrontRight,9};
+MotorGroup RightDrive{FrontRight,6};
 
 MotorGroup topIntake{11,-14};
 MotorGroup botIntake{12,16};//<-rename befor using
