@@ -260,9 +260,9 @@ void initialize() {
          //drive->moveDistance(12_in);/*<-move back*/
        })
 
-      .button("Red", [&]() { auton(-1); })
+      /*.button("Red", [&]() { auton(-1); })
 
-      .button("Blue", [&]() { auton(); })
+      .button("Blue", [&]() { auton(); })*/
 
       .build()
 
