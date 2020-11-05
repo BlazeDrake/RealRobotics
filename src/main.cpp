@@ -38,7 +38,7 @@ MotorGroup LeftDrive{FrontLeft,20};
 MotorGroup RightDrive{FrontRight,15};
 
 MotorGroup topIntake{7,8};
-MotorGroup botIntake{9,10};//<-rename befor using
+MotorGroup botIntake{9,-10};//<-rename befor using
 
 //if pid is needed for 1 motor std::shared_ptr<Motor> ramp=std::make_shared<Motor>(rampPort);
 
@@ -385,9 +385,9 @@ void opcontrol() {
 
     double left, right,
 
-    turn(masterController.getAnalog(ControllerAnalog::leftX)),
+    forward(-masterController.getAnalog(ControllerAnalog::leftX)),
 
-    forward(-masterController.getAnalog(ControllerAnalog::rightY));
+    turn(masterController.getAnalog(ControllerAnalog::rightY));
 
     if(std::abs(forward)<=0.1){
 
