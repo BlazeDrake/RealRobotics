@@ -14,8 +14,8 @@ using namespace lib7842;
 
 //motor constants(if odom is used)
 
-const int FrontLeft{-7};
-const int FrontRight{-1};
+const int FrontLeft{-14};
+const int FrontRight{-16};
 
 
 //controller stuff
@@ -33,12 +33,12 @@ ControllerDigital botOut{ControllerDigital::L2};
 
 //motor stuff
 
-MotorGroup LeftDrive{FrontLeft,8};
+MotorGroup LeftDrive{FrontLeft,20};
 
-MotorGroup RightDrive{FrontRight,6};
+MotorGroup RightDrive{FrontRight,15};
 
-MotorGroup topIntake{17,15};
-MotorGroup botIntake{-12,16};//<-rename befor using
+MotorGroup topIntake{7,8};
+MotorGroup botIntake{9,10};//<-rename befor using
 
 //if pid is needed for 1 motor std::shared_ptr<Motor> ramp=std::make_shared<Motor>(rampPort);
 
