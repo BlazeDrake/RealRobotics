@@ -334,7 +334,7 @@ void autonomous() {
 
     //selector->run();
 
-    //drive->driveToPoint(Point{0_in,-1_in});
+    drive->driveToPoint(Point{0_in,-1_in});
 
 
 
@@ -429,12 +429,12 @@ void opcontrol() {
 
 
 //auton button(COMMENT OUT FOR COMPS)
-/*
+
 if(Dinput(ControllerDigital::A)){
 
-  selector->run();
+  autonomous();
 
-}*/
+}
 
 		pros::delay(20);
 
