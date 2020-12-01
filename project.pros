@@ -296,7 +296,7 @@
         },
         "upload_options": {
             "compress_bin": true,
-            "description": "0.4: port change",
+            "description": "1.0: complete drive",
             "remote_name": "robot",
             "slot": 1
         }
