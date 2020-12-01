@@ -33,9 +33,9 @@ ControllerDigital botOut{ControllerDigital::L2};
 
 //motor stuff
 
-MotorGroup LeftDrive{FrontLeft};
+Motor LeftDrive{FrontLeft};
 
-MotorGroup RightDrive{FrontRight};
+Motor RightDrive{FrontRight};
 
 MotorGroup topIntake{4,21};
 MotorGroup botIntake{9,-7};//<-rename befor using
@@ -57,10 +57,10 @@ MotorGroup botIntake{9,-7};//<-rename befor using
 
 std::shared_ptr<OdomChassisController> drive= ChassisControllerBuilder()
   .withMotors(LeftDrive,RightDrive)
-  .withGains({.0001,0.0,.00001}, {.003,0.0,0.0003})
+  .withGains({.7,0.0,.00000}, {.003,0.0,0.0003})
   .withSensors(LeftDrive.getEncoder(),RightDrive.getEncoder()) //<-encoders
   .withDimensions(AbstractMotor::gearset::green,ChassisScales{{3.25_in,10.25_in},imev5GreenTPR})
-  .withOdometry(StateMode::CARTESIAN)
+  .withOdometry(StateMode::CARTESIAN,0.1_in)
   .buildOdometry();
 
   //.withClosedLoopControllerTimeUtil(25,5,250_ms)
