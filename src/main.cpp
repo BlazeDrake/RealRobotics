@@ -34,11 +34,13 @@ ControllerDigital botOut{ControllerDigital::L2};
 //motor stuff
 
 Motor LeftDrive{FrontLeft};
+//std::shared_ptr<ContinuousRotarySensor> leftEncoder;
 
 Motor RightDrive{FrontRight};
+//std::shared_ptr<ContinuousRotarySensor> rightEncoder;
 
 MotorGroup topIntake{4,21};
-MotorGroup botIntake{9,-7};//<-rename befor using
+MotorGroup botIntake{9,-7};//<-rename before using
 
 //if pid is needed for 1 motor std::shared_ptr<Motor> ramp=std::make_shared<Motor>(rampPort);
 
@@ -58,12 +60,12 @@ MotorGroup botIntake{9,-7};//<-rename befor using
 std::shared_ptr<OdomChassisController> drive= ChassisControllerBuilder()
   .withMotors(LeftDrive,RightDrive)
   .withGains({.7,0.0,.00000}, {.003,0.0,0.0003})
-  .withSensors(LeftDrive.getEncoder(),RightDrive.getEncoder()) //<-encoders
+  //.withSensors(leftEncoder,rightEncoder) //<-encoders
   .withDimensions(AbstractMotor::gearset::green,ChassisScales{{3.25_in,10.25_in},imev5GreenTPR})
-  .withOdometry(StateMode::CARTESIAN,0.1_in)
+  .withOdometry()
   .buildOdometry();
-
   //.withClosedLoopControllerTimeUtil(25,5,250_ms)
+
 
 
 
@@ -224,13 +226,12 @@ void initialize() {
 	LeftDrive.tarePosition();
 
   LeftDrive.setEncoderUnits(AbstractMotor::encoderUnits::rotations);
-
+  //leftEncoder=LeftDrive.getEncoder();
 
 
 	RightDrive.tarePosition();
-
 	RightDrive.setEncoderUnits(AbstractMotor::encoderUnits::rotations);
-
+  //rightEncoder=RightDrive.getEncoder();
 
 
 

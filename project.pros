@@ -296,7 +296,7 @@
         },
         "upload_options": {
             "compress_bin": true,
-            "description": "1.06 DEV: PID tuning",
+            "description": "1.07 DEV: PID tuning",
             "remote_name": "robot",
             "slot": 1
         }
