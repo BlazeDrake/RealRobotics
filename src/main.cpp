@@ -21,8 +21,9 @@ const int FrontRight{13};
 //controller stuff
 
 Controller masterController;
-ControllerDigital topIn{ControllerDigital::R1};
-ControllerDigital topOut{ControllerDigital::R2};
+ControllerDigital rollTopIn{ControllerDigital::R1};
+ControllerDigital rollBotIn{ControllerDigital::R2};
+ControllerDigital rollOut{ControllerDigital::B};
 
 
 
@@ -37,7 +38,8 @@ MotorGroup LeftDrive{FrontLeft,-19};
 
 MotorGroup RightDrive{FrontRight,20};
 
-MotorGroup topIntake{6,2};
+Motor topRoller{6};
+Motor botRoller{2};
 MotorGroup botIntake{-7,8};//<-rename before using
 
 //if pid is needed for 1 motor std::shared_ptr<Motor> ramp=std::make_shared<Motor>(rampPort);
@@ -388,6 +390,8 @@ void opcontrol() {
 
     turn(masterController.getAnalog(ControllerAnalog::rightY));
 
+    bool rollingOut=!(Dinput(rollBotIn)&&!Dinput(rollTopIn))&&Dinput(rollOut);
+
     if(std::abs(forward)<=0.1){
 
         left=turn;
@@ -406,14 +410,21 @@ void opcontrol() {
 
     drive->getModel()->tank(left*driveSpeed,right*driveSpeed,.1);
 
-    if(Dinput(topIn)){
-      topIntake.moveVelocity(600);
+    if(Dinput(rollTopIn)){
+      topRoller.moveVelocity(600);
     }
-    else if(Dinput(topOut)){
-      topIntake.moveVelocity(-600);
+    else if(!rollingOut){
+      topRoller.moveVelocity(0);
     }
-    else{
-      topIntake.moveVelocity(0);
+    if(Dinput(rollBotIn)){
+      botRoller.moveVelocity(600);
+    }
+    else if(!rollingOut){
+      botRoller.moveVelocity(0);
+    }
+    if(rollingOut){
+      botRoller.moveVelocity(-600);
+      topRoller.moveVelocity(-600);
     }
 
     if(Dinput(botIn)){
@@ -441,4 +452,5 @@ void opcontrol() {
 
 
 
+}
 }
