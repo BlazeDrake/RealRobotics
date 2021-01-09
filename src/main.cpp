@@ -34,9 +34,9 @@ ControllerDigital botOut{ControllerDigital::L2};
 
 //motor stuff
 
-MotorGroup LeftDrive{FrontLeft,-19};
+MotorGroup LeftDrive{FrontLeft,19};
 
-MotorGroup RightDrive{FrontRight,20};
+MotorGroup RightDrive{FrontRight,-20};
 
 Motor topRoller{6};
 Motor botRoller{2};
@@ -374,11 +374,7 @@ void autonomous() {
 //vars at the top
 
 void opcontrol() {
-
-
-
 	while (true) {
-
 	pros::lcd::set_text(1, "right!");
 
 
@@ -386,27 +382,27 @@ void opcontrol() {
 
     double left, right,
 
-    forward(-masterController.getAnalog(ControllerAnalog::leftX)),
+    forward(-masterController.getAnalog(ControllerAnalog::leftY)),
 
-    turn(masterController.getAnalog(ControllerAnalog::rightY));
+    turn(masterController.getAnalog(ControllerAnalog::rightX));
 
     bool rollingOut=!(Dinput(rollBotIn)&&!Dinput(rollTopIn))&&Dinput(rollOut);
 
-    if(std::abs(forward)<=0.1){
+    //if(std::abs(forward)<=0.1){
 
-        left=turn;
+        left=-turn;
 
-        right=-turn;
+        right=turn;
 
-    }
+    //}
 
-    else{
+    /*else{
 
       left=forward+(0.75*turn);
 
       right=forward-(0.75*turn);
 
-    }
+    }*/
 
     drive->getModel()->tank(left*driveSpeed,right*driveSpeed,.1);
 
