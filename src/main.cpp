@@ -14,7 +14,7 @@ using namespace lib7842;
 
 //motor constants(if odom is used)
 
-const int FrontLeft{20};
+const int FrontLeft{-12};
 const int FrontRight{13};
 
 
@@ -33,14 +33,12 @@ ControllerDigital botOut{ControllerDigital::L2};
 
 //motor stuff
 
-Motor LeftDrive{FrontLeft};
-//std::shared_ptr<ContinuousRotarySensor> leftEncoder;
+MotorGroup LeftDrive{FrontLeft,-19};
 
-Motor RightDrive{FrontRight};
-//std::shared_ptr<ContinuousRotarySensor> rightEncoder;
+MotorGroup RightDrive{FrontRight,20};
 
-MotorGroup topIntake{4,21};
-MotorGroup botIntake{9,-7};//<-rename before using
+MotorGroup topIntake{6,2};
+MotorGroup botIntake{-7,8};//<-rename before using
 
 //if pid is needed for 1 motor std::shared_ptr<Motor> ramp=std::make_shared<Motor>(rampPort);
 
@@ -431,7 +429,7 @@ void opcontrol() {
 
 //auton button(COMMENT OUT FOR COMPS)
 
-if(Dinput(ControllerDigital::A)){
+/*if(Dinput(ControllerDigital::A)){
 
   autonomous();
 
@@ -439,7 +437,7 @@ if(Dinput(ControllerDigital::A)){
 
 		pros::delay(20);
 
-	}
+	}*/
 
 
 
