@@ -296,7 +296,7 @@
         },
         "upload_options": {
             "compress_bin": true,
-            "description": "1.09 DEV: drive fixing",
+            "description": "1.11 DEV: drive fixing",
             "remote_name": "robot",
             "slot": 1
         }

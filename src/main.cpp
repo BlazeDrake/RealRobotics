@@ -14,17 +14,17 @@ using namespace lib7842;
 
 //motor constants(if odom is used)
 
-const int FrontLeft{-12};
-const int FrontRight{13};
+const int FrontLeft{20};
+const int FrontRight{-19};
 
 
 //controller stuff
 
 Controller masterController;
-ControllerDigital rollTopIn{ControllerDigital::R1};
-ControllerDigital rollBotIn{ControllerDigital::R2};
-ControllerDigital rollOut{ControllerDigital::B};
-
+ControllerDigital rollTop{ControllerDigital::R1};
+ControllerDigital rollBot{ControllerDigital::R2};
+ControllerDigital reverseTop{ControllerDigital::B};
+ControllerDigital reverseBot{ControllerDigital::down};
 
 
 ControllerDigital botIn{ControllerDigital::L1};
@@ -33,14 +33,15 @@ ControllerDigital botOut{ControllerDigital::L2};
 
 
 //motor stuff
+Motor LeftFront{20};
+MotorGroup LeftDrive{FrontLeft,13};
 
-MotorGroup LeftDrive{FrontLeft,19};
+MotorGroup RightDrive{FrontRight,-11};
 
-MotorGroup RightDrive{FrontRight,-20};
-
-Motor topRoller{6};
-Motor botRoller{2};
-MotorGroup botIntake{-7,8};//<-rename before using
+Motor topRoller{2};
+Motor botRoller{8};
+Motor botIntakeLeft{6};
+Motor botIntakeRight{-7};
 
 //if pid is needed for 1 motor std::shared_ptr<Motor> ramp=std::make_shared<Motor>(rampPort);
 
@@ -93,13 +94,12 @@ GUI::Selector* selector;
 //other variables
 
 
+int rollMultTop=1;
+int rollMultBot=1;
+bool pressingTop=false;
+bool pressingBot=false;
 
-
-
-
-
-
-const double driveSpeed(1);//<-percentage, 1=100%
+const double driveSpeed(0.75);//<-percentage, 1=100%
 
 
 
@@ -335,7 +335,7 @@ void autonomous() {
 
     //selector->run();
 
-    drive->driveToPoint(Point{0_in,-1_in});
+    drive->driveToPoint(Point{0_in,1_in});
 
 
 
@@ -386,54 +386,72 @@ void opcontrol() {
 
     turn(masterController.getAnalog(ControllerAnalog::rightX));
 
-    bool rollingOut=!(Dinput(rollBotIn)&&!Dinput(rollTopIn))&&Dinput(rollOut);
 
-    //if(std::abs(forward)<=0.1){
+
+    if(std::abs(forward)<=0.1){
 
         left=-turn;
 
         right=turn;
 
-    //}
+    }
 
-    /*else{
+    else{
 
-      left=forward+(0.75*turn);
+      left=forward-(0.75*turn);
 
-      right=forward-(0.75*turn);
+      right=forward+(0.75*turn);
 
-    }*/
+    }
 
     drive->getModel()->tank(left*driveSpeed,right*driveSpeed,.1);
 
-    if(Dinput(rollTopIn)){
-      topRoller.moveVelocity(600);
+    if(Dinput(rollTop)){
+      topRoller.moveVelocity(600*rollMultTop);
     }
-    else if(!rollingOut){
+    else{
       topRoller.moveVelocity(0);
     }
-    if(Dinput(rollBotIn)){
-      botRoller.moveVelocity(600);
+
+    if(Dinput(rollBot)){
+      botRoller.moveVelocity(600*rollMultBot);
     }
-    else if(!rollingOut){
+    else{
       botRoller.moveVelocity(0);
-    }
-    if(rollingOut){
-      botRoller.moveVelocity(-600);
-      topRoller.moveVelocity(-600);
     }
 
     if(Dinput(botIn)){
-      botIntake.moveVelocity(600);
+      botIntakeLeft.moveVelocity(600);
+      botIntakeRight.moveVelocity(600);
     }
     else if(Dinput(botOut)){
-      botIntake.moveVelocity(-600);
+      botIntakeLeft.moveVelocity(-600);
+      botIntakeRight.moveVelocity(-600);
     }
     else{
-      botIntake.moveVelocity(0);
+      botIntakeLeft.moveVelocity(0);
+      botIntakeRight.moveVelocity(0);
     }
 
+    if(Dinput(reverseTop)){
+        if(!pressingTop){
+          rollMultTop=-rollMultTop;
+          pressingTop=true;
+        }
+    }
+    else{
+        pressingTop=false;
+    }
 
+    if(Dinput(reverseBot)){
+        if(!pressingBot){
+          rollMultBot=-rollMultBot;
+          pressingBot=true;
+        }
+    }
+    else{
+        pressingBot=false;
+    }
 //auton button(COMMENT OUT FOR COMPS)
 
 /*if(Dinput(ControllerDigital::A)){
