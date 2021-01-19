@@ -33,7 +33,6 @@ ControllerDigital botOut{ControllerDigital::L2};
 
 
 //motor stuff
-Motor LeftFront{20};
 MotorGroup LeftDrive{FrontLeft,13};
 
 MotorGroup RightDrive{FrontRight,-11};
