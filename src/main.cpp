@@ -14,8 +14,8 @@ using namespace lib7842;
 
 //motor constants(if odom is used)
 
-const int FrontLeft{20};
-const int FrontRight{-19};
+const int FrontLeft{-20};
+const int FrontRight{19};
 
 
 //controller stuff
@@ -33,9 +33,9 @@ ControllerDigital botOut{ControllerDigital::L2};
 
 
 //motor stuff
-MotorGroup LeftDrive{FrontLeft,13};
+MotorGroup LeftDrive{FrontLeft,-13};
 
-MotorGroup RightDrive{FrontRight,-11};
+MotorGroup RightDrive{FrontRight,11};
 
 Motor topRoller{2};
 Motor botRoller{8};
@@ -57,13 +57,12 @@ Motor botIntakeRight{-7};
 
 
 
-std::shared_ptr<OdomChassisController> drive= ChassisControllerBuilder()
+std::shared_ptr<ChassisController> drive= ChassisControllerBuilder()
   .withMotors(LeftDrive,RightDrive)
-  .withGains({.7,0.0,.00000}, {.003,0.0,0.0003})
+  .withGains({.5,0.0,.00000}, {.003,0.0,0.0003})
   //.withSensors(leftEncoder,rightEncoder) //<-encoders
   .withDimensions(AbstractMotor::gearset::green,ChassisScales{{3.25_in,10.25_in},imev5GreenTPR})
-  .withOdometry()
-  .buildOdometry();
+  .build();
   //.withClosedLoopControllerTimeUtil(25,5,250_ms)
 
 
@@ -334,7 +333,7 @@ void autonomous() {
 
     //selector->run();
 
-    drive->driveToPoint(Point{0_in,1_in});
+    drive->moveDistance(6_in);
 
 
 
@@ -381,9 +380,9 @@ void opcontrol() {
 
     double left, right,
 
-    forward(-masterController.getAnalog(ControllerAnalog::leftY)),
+    forward(masterController.getAnalog(ControllerAnalog::leftY)),
 
-    turn(masterController.getAnalog(ControllerAnalog::rightX));
+    turn(-masterController.getAnalog(ControllerAnalog::rightX));
 
 
 
@@ -457,13 +456,12 @@ void opcontrol() {
 
   autonomous();
 
-}
+}*/
 
 		pros::delay(20);
 
-	}*/
+	}
 
 
 
-}
 }
