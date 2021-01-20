@@ -334,9 +334,9 @@ void autonomous() {
 
     //selector->run();
 
-    drive->driveToPoint(Point{0_in,1_in});
-
-
+    drive->getModel()->forward(-1);
+    pros::delay(500);
+    drive->getModel()->forward(0);
 
 }
 
