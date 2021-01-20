@@ -334,10 +334,16 @@ void autonomous() {
 
     //selector->run();
 
-    drive->getModel()->forward(-1);
-    pros::delay(500);
-    drive->getModel()->forward(0);
+    drive->getModel()->forward(-0.25);
+    pros::delay(525);
 
+    drive->getModel()->forward(0);
+    topRoller.moveVelocity(600);
+    botRoller.moveVelocity(600);
+    pros::delay(1000);
+
+    topRoller.moveVelocity(0);
+    botRoller.moveVelocity(0);
 }
 
 
