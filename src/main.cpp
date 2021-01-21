@@ -344,8 +344,8 @@ void autonomous() {
 
     topRoller.moveVelocity(0);
     botRoller.moveVelocity(0);
-    drive->getModel()->forward(0.25);
-    pros::delay(250);
+    drive->getModel()->forward(0.1);
+    pros::delay(500);
 
     drive->getModel()->forward(0);
 }
