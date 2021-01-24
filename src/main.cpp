@@ -338,6 +338,12 @@ void autonomous() {
     pros::delay(525);
 
     drive->getModel()->forward(0);
+    botIntakeLeft.moveVelocity(600);
+    botIntakeRight.moveVelocity(600);
+    pros::delay(500);
+
+    botIntakeLeft.moveVelocity(0);
+    botIntakeRight.moveVelocity(0);
     topRoller.moveVelocity(600);
     botRoller.moveVelocity(600);
     pros::delay(1000);
