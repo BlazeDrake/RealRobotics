@@ -333,10 +333,33 @@ void autonomous() {
 
     //selector->run();
 
+<<<<<<< HEAD
     drive->moveDistance(6_in);
 
 
 
+=======
+    drive->getModel()->forward(-0.25);
+    pros::delay(525);
+
+    drive->getModel()->forward(0);
+    botIntakeLeft.moveVelocity(600);
+    botIntakeRight.moveVelocity(600);
+    pros::delay(500);
+
+    botIntakeLeft.moveVelocity(0);
+    botIntakeRight.moveVelocity(0);
+    topRoller.moveVelocity(600);
+    botRoller.moveVelocity(600);
+    pros::delay(1000);
+
+    topRoller.moveVelocity(0);
+    botRoller.moveVelocity(0);
+    drive->getModel()->forward(0.1);
+    pros::delay(500);
+
+    drive->getModel()->forward(0);
+>>>>>>> 8fa4495b6b5d2c3c59d9ef4a9419d820d57ad0b3
 }
 
 
